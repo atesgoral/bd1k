@@ -137,6 +137,7 @@ u=(j,t)=>{m[j]=t;a[j]=f}
 i=f=>{for(j=0;j<w*h;j++)f(j,j%w,0|j/w)}
 i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.7?r()<.7?2:3:0:1)
 m[w+1]=4
+m[w*h-w-1]=0
 setInterval(_=>{
 i((j,x,y)=>c.drawImage(p,m[j]*8,0,8,16,x*s,y*s,s,s))
 i(j=>a[j]!=f&&(t=m[j])>2&&{

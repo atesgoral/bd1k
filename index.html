@@ -126,13 +126,10 @@
 p = new Image();
 p.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg'
 c.imageSmoothingEnabled=0
-
 k=[]
 v=[0,0]
-
 onkeydown=e=>{k[e=e.which&3]=1,v[e&1]=(e&2)-1}
 onkeyup=e=>k[e=e.which&3]&&(v[e&1]=k[e]=0)
-
 w=20;h=20;s=32;m=[];n=[];f=1
 r=Math.random
 i=f=>{for(j=w*h;j--;)f(j,j%w,0|j/w)}

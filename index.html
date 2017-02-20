@@ -133,8 +133,8 @@ v=[0,0]
 onkeydown=e=>{k[e=e.which&3]=1,v[e&1]=(e&2)-1}
 onkeyup=e=>k[e=e.which&3]&&(v[e&1]=k[e]=0)
 
-w=20;h=20;s=32;q=37;m=[];n=[];f=1
-r=_=>(q=q*13^57&63)/64
+w=20;h=20;s=32;m=[];n=[];f=1
+r=Math.random
 i=f=>{for(j=w*h;j--;)f(j,j%w,0|j/w)}
 i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.5?r()<.7?2:3:0:1)
 m[w+1]=4

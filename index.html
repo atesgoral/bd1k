@@ -123,12 +123,12 @@
       var TOKEN_RELOAD_ONORIENTATIONCHANGE = true;
     </script>
     <script type="demo">
-p = new Image();
+p=new Image
 p.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg'
-c.imageSmoothingEnabled=0
+f=c.imageSmoothingEnabled=0
 onkeydown=e=>{a[e=e.which&3]=1,c[e&1]=(e&2)-1}
 onkeyup=e=>a[e=e.which&3]&&(c[e&1]=a[e]=0)
-w=20;h=20;s=32;m=[];n=[];f=1
+w=20;h=20;s=32;m=[];n=[]
 r=Math.random
 u=(j,t)=>{m[j]=t;a[j]=f}
 i=f=>{for(j=0;j<w*h;j++)f(j,j%w,0|j/w)}
@@ -140,8 +140,7 @@ i(j=>a[j]!=f&&(t=m[j])>2&&{
 3:_=>!m[j+w]&&(u(j+w,3),m[j]=0,1)||(m[j+w]==3)&&((m[j-1]+m[j+w-1]<1)&&(u(j-1,3),u(j,0),1)||(m[j+1]+m[j+w+1]<1)&&(u(j+1,3),u(j,0))),
 4:_=>(c[0]&&~m[d=j+c[0]*-w]&1||c[1]&&~m[d=j+c[1]]&1)&&u(d,4,m[j]=0)
 }[t]())
-f++
-},100)
+f++},100)
     </script>
     <script>
       (function(){var doc=document;var header=doc.getElementsByTagName("header")[0];var firstChild=header.firstChild;var p=doc.getElementsByClassName("p")[0];

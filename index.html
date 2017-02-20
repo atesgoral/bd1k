@@ -135,10 +135,11 @@ e=A-w-1
 m=[]
 n=[]
 o=1
-r=Math.random
+q=37
+r=_=>((q=q*13^57)&A-1)/A
 u=(j,t)=>m[a[j]=f,j]=t
 i=f=>{for(j=0;j<A;j++)f(j,j%w,0|j/w)}
-$=_=>{i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.7?r()<.7?2:3:0:1);m[w+1]=4;m[e]=0}
+$=_=>{i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.9?r()<.9?2:3:0:1);m[w+1]=4;m[e]=0}
 setInterval(_=>{
 i((j,x,y)=>c.drawImage(p,o&&(x+y)%h<=h-o?8:m[j]*8,0,8,16,x*w,y*w,w,w))
 o?--o||$():m[e]?(o=h):i(j=>a[j]!=f&&(t=m[j])>2&&{

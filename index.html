@@ -112,7 +112,7 @@
       // true enables webgl shim (exposes `g`), false enables canvas shim (exposes `c`)
       var TOKEN_WEBGL = false;
       // px, 0 means always 100%
-      var TOKEN_MAX_WIDTH = 640;
+      var TOKEN_MAX_WIDTH = 1024;
       // px, 0 means always 100%
       var TOKEN_MAX_HEIGHT = 640;
       // should the size be smaller than specified if viewport is smaller?
@@ -128,11 +128,14 @@ p.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFB
 f=c.imageSmoothingEnabled=0
 onkeydown=e=>{a[e=e.which&3]=1,c[e&1]=(e&2)-1}
 onkeyup=e=>a[e=e.which&3]&&(c[e&1]=a[e]=0)
-w=20;h=20;s=32;m=[];n=[]
+h=20
+w=s=32
+m=[]
+n=[]
 r=Math.random
 u=(j,t)=>{m[j]=t;a[j]=f}
 i=f=>{for(j=0;j<w*h;j++)f(j,j%w,0|j/w)}
-i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.5?r()<.7?2:3:0:1)
+i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()<.7?r()<.7?2:3:0:1)
 m[w+1]=4
 setInterval(_=>{
 i((j,x,y)=>c.drawImage(p,m[j]*8,0,8,16,x*s,y*s,s,s))

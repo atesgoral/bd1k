@@ -139,7 +139,7 @@ q=3;
 r=_=>((q=q*13^57)&960)<A;
 u=(j,t)=>m[a[j]=f,j]=t;
 i=f=>{for(j=0;j<A;j++)f(j,j%w,0|j/w)};
-$=_=>{i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()?r()?2:3:0:1);m[w+1]=4;m[e]=0};
+$=_=>{i((j,x,y)=>m[j]=x*y&&x<w-1&&y<h-1?r()?r()?2:3:0:1);m[w+1]=4;m[e]=m[e-1]=0};
 setInterval(_=>{
 i((j,x,y)=>c.drawImage(p,o&&(x+y)%h<=h-o?8:m[j]*8,0,8,16,x*w,y*w,w,w));
 o?--o||$():m[e]?(o=h):i(j=>a[j]!=f&&(t=m[j])>2&&{

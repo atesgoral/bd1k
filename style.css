@@ -1,0 +1,35 @@
+body,html { height: 100% }
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  font-size: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+#error {
+  color: red;
+  margin: 20px auto;
+  font-size: 1.5em;
+}
+canvas {
+  margin: 20px auto;
+}
+#bytes {
+  font-size: 1.5em;
+  width: 800px;
+  margin: 10px auto;
+  text-align: right;
+}
+#minified {
+  font-family: monospace;
+  font-size: 1em;
+  width: 800px;
+  margin: 0 auto;
+  border: 0;
+  word-break: break-all;
+  white-space: pre-wrap;
+  resize: none;
+}

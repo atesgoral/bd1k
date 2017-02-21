@@ -156,7 +156,7 @@ setInterval(_ => {
             4: _ => // player
               playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1
               || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1
-                ? set(k, 4, map[j] = 0)
+                ? set(k, 4) & set(j, 0)
                 : 0
           }[t](), // invoke tile handler
         processCount++ // increment process count

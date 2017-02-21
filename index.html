@@ -20,54 +20,112 @@
       a.height = a.offsetHeight;
     </script>
     <script id="source" type="text/annotated">
-// Tiles
-(p = new Image).src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
+// predefined global variables:
+// ctx - canvas 2D context
 
-// Turn off image smoothing for enlarged tiles on Chrome & Firefox
-l = p => c[p + 'mageSmoothingEnabled'] = 0;
+// tiles
+(tiles = new Image).src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
 
-f = l('i'), l('mozI'); // f is the processed frame counter to prevent reprocessing a moved tile
+// turn off image smoothing for image enlarging on Chrome & Firefox to get crispy and chunky pixels
+disableImageSmoothing = p => ctx[p + 'mageSmoothingEnabled'] = 0;
 
-onkeydown = e => c[b[e = e.which] = 1, e & 1] = (e & 2) - 1;
-onkeyup = e => b[e = e.which] && (c[e & 1] = a[e] = 0);
+processCount = // processed frame counter to prevent reprocessing a moved tile
+  disableImageSmoothing('i'),
+  disableImageSmoothing('mozI');
 
-h = 20; // Map height
-w = 32; // Map width and tile size
-A = h * w; // Map area
-e = A - w - 1; // Exit location
+onkeydown = e =>
+  playerVectors[b[e = e.which] = 1, e & 1] = (e & 2) - 1;
 
-m = [ // Map
-  o = 1 // Level restart countdown. 0 to run game, >0 to stop game & render level transition animation
+onkeyup = e =>
+  b[e = e.which] &&
+    (playerVectors[e & 1] = a[e] = 0);
+
+mapHeight = 20;
+mapWidthOrTileSize = 32;
+
+mapArea = mapHeight * mapWidthOrTileSize;
+
+exit = mapArea - mapWidthOrTileSize - 1;
+
+map = [
+  levelTransition = 1 // Level transition counter. 0 to run game, >0 to stop game & render level transition animation
 ];
 
-q = 5; // PRNG seed
+seed = 5; // PRNG seed
 
-r = _ => (
-  (q += q * q | 5) // PRNG (pseudo-random number generator)
+preferably = _ => (
+  (seed += seed * seed | 5) // PRNG (pseudo-random number generator)
   %
-  A
-) / A < .8;
+  mapArea
+) / mapArea < .8;
 
-v = (j, t) => m[a[j] = f, j] = t;
+set = (j, t) =>
+  map[
+    a[j] = processCount,
+    j
+  ] = t;
 
-i = f => {
-  for (j = 0; j < A; j++)
-    f(j, j % w, 0 | j / w)
+iterate = f => {
+  for (j = 0; j < mapArea; j++)
+    f(j, j % mapWidthOrTileSize, j / mapWidthOrTileSize | 0)
 };
 
-$ = _ => {
-  i((j, x, y) => m[j] = x * y && x < w - 1 && y < h - 1 ? r() ? r() ? 2 : 3 : 0 : 1);
-  m[w + 1] = 4;
-  m[e] = 0
+restart = _ => {
+  iterate(
+    (j, x, y) =>
+      map[j] = x * y && x < mapWidthOrTileSize - 1 && y < mapHeight - 1
+        ? preferably()
+          ? preferably()
+            ? 2
+            : 3
+          : 0
+        : 1
+  );
+
+  map[mapWidthOrTileSize + 1] = 4;
+  map[exit] = 0
 };
 
 setInterval( _ => {
-  i((j, x, y) => c.drawImage(p, o && (x + y) % h <= h - o ? 8 : m[j] * 8, 0, 8, 16, x * w, y * w, w, w));
+  // Render tiles
+  iterate((j, x, y) =>
+    ctx.drawImage(
+      tiles,
+      levelTransition && (x + y) % mapHeight <= mapHeight - levelTransition
+        ? 8
+        : map[j] * 8,
+      0, // source tile y
+      8, // source tile width
+      16, // source tile height
+      x * mapWidthOrTileSize, // destination tile x
+      y * mapWidthOrTileSize, // destination tile y
+      mapWidthOrTileSize, // destination tile width
+      mapWidthOrTileSize // destination tile height
+    )
+  );
 
-  o ? --o || $() : m[e] ? (o = h) : i(j => a[j] != f && (t = m[j]) > 2 && {
-    3: _ => !m[j+w]&&(v(j+w,3),m[j]=0,1)||(m[j+w]==3)&&((m[j-1]+m[j+w-1]<1)&&(v(j-1,3),v(j,0),1)||(m[j+1]+m[j+w+1]<1)&&(v(j+1,3),v(j,0))),
-    4: _ => (c[0]&&~m[k=j+c[0]*-w]&1||c[1]&&~m[k=j+c[1]]&1)&&v(k,4,m[j]=0)
-  }[t](), f++)
+  levelTransition // if in the process of level transition
+    ? --levelTransition || // then decrement counter
+      restart() // start next level if counter has reached 0
+    : map[exit] // else if exit is occupied (by player)
+      ? (levelTransition = mapHeight) // then start level transition
+      : iterate( // else process map
+        j =>
+          a[j] != processCount && // tile hasn't been already processed in this frame (might have been moved into this position)
+          (t = map[j]) > 2 &&
+          {
+            3: _ =>
+              !map[j + mapWidthOrTileSize] && (
+                set(j + mapWidthOrTileSize, 3), map[j] = 0, 1 // Move boulder down, return truthy
+              ) ||
+                (map[j + mapWidthOrTileSize] == 3) &&
+                ((map[j - 1] + map[j + mapWidthOrTileSize - 1] < 1) &&
+                  (set(j - 1, 3), set(j, 0), 1) || (map[j + 1] + map[j + mapWidthOrTileSize + 1] < 1) && (set(j + 1, 3), set(j, 0))),
+            4: _ =>
+              (playerVectors[0] && ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1 || playerVectors[1] && ~map[k = j + playerVectors[1]] & 1) && set(k, 4, map[j] = 0)
+          }[t](),
+        processCount++ // increment process count
+      )
 }, 99)
     </script>
     <script>
@@ -76,7 +134,27 @@ setInterval( _ => {
       const min = src
         .replace(/\s+\/\/.+$/gm, '') // Trim line comments
         .replace(/[\s\n]+(?!\w)/gm, '') // Trim all whitespace that are not followed by word character
-        .replace(/(\W)[\s\n]+/gm, '$1'); // Trim all whitespace that follow a non-word character
+        .replace(/(\W)[\s\n]+/gm, '$1') // Trim all whitespace that follow a non-word character
+        .replace(/(\w+)/gm, (s, name) => { // Shorten variables
+          return {
+            iterate: 'i',
+            preferably: 'r',
+            seed: 'q',
+            mapHeight: 'h',
+            mapWidthOrTileSize: 'w',
+            mapArea: 'A',
+            exit: 'e',
+            levelTransition: 'o',
+            tiles: 'p',
+            map: 'm',
+            set: 'v',
+            restart: '$',
+            ctx: 'c',
+            playerVectors: 'c',
+            disableImageSmoothing: 'l',
+            processCount: 'f'
+          }[name] || name;
+        });
 
       bytes.innerHTML = min.length;
       minified.value = min;

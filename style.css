@@ -2,34 +2,49 @@ body,html { height: 100% }
 body {
   margin: 0;
   padding: 0;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
+  background: #111;
   font-size: 100%;
-  overflow: hidden;
   font-family: sans-serif;
+  overflow: auto;
+}
+header, main {
+  width: 1024px;
+  margin: 20px auto;
+}
+main {
+  position: relative;
 }
 #error {
   color: red;
-  margin: 20px auto;
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
-canvas {
-  margin: 20px auto;
+h1 {
+  color: #ccc;
+  font-size: 2em;
+  font-weight: normal;
+}
+canvas:focus {
+  outline: none;
+}
+h2 {
+  color: #ccc;
+  font-size: 1.5em;
+  font-weight: normal;
+}
+code {
+  font-size: 1.25em;
+  box-sizing: border-box;
 }
 #bytes {
-  font-size: 1.5em;
-  width: 800px;
-  margin: 10px auto;
+  color: #aaa;
+  font-size: 1em;
   text-align: right;
+  position: absolute;
+  width: 100%;
 }
 #minified {
-  font-family: monospace;
-  font-size: 1em;
-  width: 800px;
-  margin: 0 auto;
-  border: 0;
   word-break: break-all;
   white-space: pre-wrap;
-  resize: none;
+}
+#source {
 }

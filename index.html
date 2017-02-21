@@ -2,24 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Boulder Dash</title>
+    <title>Boulder Dash - js1k 2017</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+    <script src="main.js"></script>
   </head>
   <body id="body">
-    <div id="error"></div>
-    <canvas id="canvas" width="1024" height="640"></canvas>
-    <div id="bytes"></div>
-    <textarea id="minified" rows="12"></textarea>
-    <script>
-      const a = canvas;
-      const b = body;
-      const c = a.getContext('2d');
-      const d = document;
-
-      a.width = a.offsetWidth;
-      a.height = a.offsetHeight;
-    </script>
-    <script id="source" type="text/annotated">
+    <header>
+      <h1>Boulder Dash - js1k 2017</h1>
+    </header>
+    <main>
+      <p id="error"></p>
+      <p><canvas id="canvas" width="1024" height="640" tabindex="0"></canvas></p>
+      <p id="bytes"></p>
+      <h2>Minified</h2>
+      <pre><code id="minified" class="js"></code></pre>
+      <h2>Annotated</h2>
+      <pre><code id="source" class="js"></code></pre>
+    </main>
+    <script id="rawSrc" type="text/plain">
 // predefined global variables:
 // ctx - canvas 2D context
 
@@ -161,49 +163,32 @@ setInterval(_ => {
       )
 }, 99) // render and process every 99 ms
     </script>
-    <script>
-      const src = source.innerHTML;
-      // Poor man's minifier
-      const min = src
-        .replace(/\s+\/\/.+$/gm, '') // Trim line comments
-        .replace(/[\s\n]+(?!\w)/gm, '') // Trim all whitespace that are not followed by word character
-        .replace(/(\W)[\s\n]+/gm, '$1') // Trim all whitespace that follow a non-word character
-        .replace(/(\w+)/gm, (s, name) => { // Shorten variables
-          return {
-            iterate: 'i',
-            preferably: 'r',
-            seed: 'q',
-            mapHeight: 'h',
-            mapWidthOrTileSize: 'w',
-            mapArea: 'A',
-            exit: 'e',
-            levelTransition: 'o',
-            tiles: 'p',
-            map: 'm',
-            startLevel: '$',
-            disableImageSmoothing: 'l',
-            processCount: 'f',
-            // arguments
-            prefix: 'p',
-            event: 'e',
-            callback: 'f',
-            // predefined globals
-            ctx: 'c',
-            // piggybacks
-            processed: 'a',
-            keyDown: 'b',
-            playerVectors: 'c'
-          }[name] || name;
-        });
-
-      bytes.innerHTML = min.length;
-      minified.value = min;
-
-      try {
-        eval(min);
-      } catch (e) {
-        error.innerHTML = e.message;
-      }
+    <script id="rawVars" type="text/plain">
+    {
+      iterate: 'i',
+      preferably: 'r',
+      seed: 'q',
+      mapHeight: 'h',
+      mapWidthOrTileSize: 'w',
+      mapArea: 'A',
+      exit: 'e',
+      levelTransition: 'o',
+      tiles: 'p',
+      map: 'm',
+      startLevel: '$',
+      disableImageSmoothing: 'l',
+      processCount: 'f',
+      // arguments
+      prefix: 'p',
+      event: 'e',
+      callback: 'f',
+      // predefined globals
+      ctx: 'c',
+      // piggybacks
+      processed: 'a',
+      keyDown: 'b',
+      playerVectors: 'c'
+    }
     </script>
   </body>
 </html>

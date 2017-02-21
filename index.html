@@ -49,11 +49,10 @@ onkeydown = event =>
   ] = (event & 2) - 1; // set vector to -1 or 1 depending on key (y vector is inverted)
 
 onkeyup = event =>
-  // @todo try ternary
-  keyDown[event = event.which] && ( // if key was down
-    playerVectors[event & 1] = // then set corresponding vector to 0
-      keyDown[event] = 0 // and mark key as not down
-  );
+  keyDown[event = event.which] // if key was down
+    ? playerVectors[event & 1] = // then set corresponding vector to 0
+        keyDown[event] = 0 // and mark key as not down
+    : 0;
 
 mapHeight = 20;
 mapWidthOrTileSize = 32;
@@ -146,21 +145,18 @@ setInterval(_ => {
           {
             3: _ => // if boulder
               !map[j + mapWidthOrTileSize] // if beneath boulder is empty
-                ? (
-                  set(j + mapWidthOrTileSize, 3), // move boulder down
-                  set(j, 0) // empty old position
-                )
+                ?
+                  set(j + mapWidthOrTileSize, 3) // move boulder down
+                  & set(j, 0) // empty old position
                 : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
                   ? map[j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // if can slide left
-                    ? (
-                      set(j - 1, 3), // move boulder left
-                      set(j, 0) // empty old position
-                    )
+                    ?
+                      set(j - 1, 3) // move boulder left
+                      & set(j, 0) // empty old position
                     : map[j + 1] + map[j + mapWidthOrTileSize + 1] < 1
-                      ? ( // if can slide right
-                        set(j + 1, 3), // move boulder right
-                        set(j, 0) // empty old position
-                      )
+                      ? // if can slide right
+                        set(j + 1, 3) // move boulder right
+                        & set(j, 0) // empty old position
                       : 0
                   : 0,
             4: _ => // if player

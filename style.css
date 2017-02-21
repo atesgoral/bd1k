@@ -6,10 +6,18 @@ body {
   font-size: 100%;
   font-family: sans-serif;
   overflow: auto;
+  color: #ccc;
 }
-header, main {
+header, main, footer {
   width: 1024px;
   margin: 20px auto;
+}
+a {
+  color: #0af;
+  text-decoration: none;
+}
+a:hover {
+  color: #0cf;
 }
 main {
   position: relative;

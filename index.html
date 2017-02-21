@@ -147,8 +147,8 @@ setInterval(_ => {
                       : 0
                   : 0,
             4: _ => // player
-              playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1
-              || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1
+              playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move
+              || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
                 ? 1 // move player
                 : 0
           }[t]() && // invoke tile handler and if a move should happen

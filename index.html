@@ -146,20 +146,20 @@ setInterval(_ => {
           { // tile handlers
             3: _ => // boulder
               !map[k = j + mapWidthOrTileSize] // if beneath boulder is empty
-                ? move() // move boulder down
+                ? 1 // move boulder down
                 : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
                   ? map[k = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
-                    ? move() // move boulder left
+                    ? 1 // move boulder left
                     : map[k = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right
-                      ? move() // move boulder right
+                      ? 1 // move boulder right
                       : 0
                   : 0,
             4: _ => // player
               playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1
               || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1
-                ? move() // move player
+                ? 1 // move player
                 : 0
-          }[t](), // invoke tile handler
+          }[t]() && move(), // invoke tile handler and move tile if there was a move
         processCount++ // increment process count
       )
 }, 99) // render and process every 99 ms

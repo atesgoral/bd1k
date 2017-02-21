@@ -80,8 +80,8 @@ preferably = _ => (
 
 // calls given callback on every map tile
 iterate = callback => {
-  for (j = 0; j < mapArea; j++)
-    callback(j, j % mapWidthOrTileSize, j / mapWidthOrTileSize | 0)
+  for (j = 0; j < mapArea;)
+    callback(j, j % mapWidthOrTileSize, j++ / mapWidthOrTileSize | 0)
 };
 
 // starts a level

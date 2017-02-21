@@ -126,14 +126,6 @@ setInterval(_ => {
     )
   );
 
-  // sets a tile on the map
-  move = _ =>
-    map[
-      map[j] = 0,
-      processed[k] = processCount, // mark tile as processed
-      k // tile index
-    ] = t; // new tile value
-
   levelTransition // if in the process of level transition
     ? --levelTransition || // then decrement counter
       startLevel() // start next level if counter has reached 0
@@ -159,7 +151,11 @@ setInterval(_ => {
               || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1
                 ? 1 // move player
                 : 0
-          }[t]() && move(), // invoke tile handler and move tile if there was a move
+          }[t]() && (map[
+            map[j] = 0,
+            processed[k] = processCount, // mark tile as processed
+            k // tile index
+          ] = t), // invoke tile handler and move tile if there was a move
         processCount++ // increment process count
       )
 }, 99) // render and process every 99 ms
@@ -183,7 +179,6 @@ setInterval(_ => {
             levelTransition: 'o',
             tiles: 'p',
             map: 'm',
-            move: 'v',
             startLevel: '$',
             disableImageSmoothing: 'l',
             processCount: 'f',

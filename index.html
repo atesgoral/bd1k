@@ -36,16 +36,13 @@
 // playerVectors - player vectors - piggybacked on canvas 2D context
 
 // tiles
-(tiles = new Image).src = 'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
-
-// turns off image smoothing to get crispy and chunky pixels
-disableImageSmoothing = prefix =>
-  ctx[prefix + 'mageSmoothingEnabled'] = 0;
+(tiles = new Image).src =
+  // browsers are resilient to omitting the content type (image/png) and the trailing base-64 paddings (=)
+  'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
 
 // processed frame counter to prevent reprocessing a moved tile
 processCount = // initialize to 0
-  disableImageSmoothing('i'), // Chrome
-  disableImageSmoothing('mozI'); // Firefox
+  ctx.imageSmoothingEnabled = 0; // turn off image smoothing to get crispy and chunky pixels
 
 onkeydown = event =>
   playerVectors[

@@ -23,77 +23,107 @@
 // predefined global variables:
 // ctx - canvas 2D context
 
+// piggybacks (on predefined global variables):
+// processed - tile process markers - piggybacked on canvas element
+// keyDown - key down flags - piggybacked on body element
+// playerVectors - player vectors - piggybacked on canvas 2D context
+
 // tiles
 (tiles = new Image).src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABfX1/QQAD///+L6qNxAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
 
-// turn off image smoothing for image enlarging on Chrome & Firefox to get crispy and chunky pixels
-disableImageSmoothing = p => ctx[p + 'mageSmoothingEnabled'] = 0;
+// turns off image smoothing to get crispy and chunky pixels
+disableImageSmoothing = prefix =>
+  ctx[prefix + 'mageSmoothingEnabled'] = 0;
 
-processCount = // processed frame counter to prevent reprocessing a moved tile
-  disableImageSmoothing('i'),
-  disableImageSmoothing('mozI');
+// processed frame counter to prevent reprocessing a moved tile
+processCount = // initialize to 0
+  disableImageSmoothing('i'), // Chrome
+  disableImageSmoothing('mozI'); // Firefox
 
-onkeydown = e =>
-  playerVectors[b[e = e.which] = 1, e & 1] = (e & 2) - 1;
+onkeydown = event =>
+  playerVectors[
+    keyDown[
+      event = event.which // grab arrow key code (37: left, 38: up, 39: right, 40: down)
+    ] = 1, // mark key as down
+    event & 1 // vector index based on key (0: y vector, 1: x vector)
+  ] = (event & 2) - 1; // set vector to -1 or 1 depending on key (y vector is inverted)
 
-onkeyup = e =>
-  b[e = e.which] &&
-    (playerVectors[e & 1] = a[e] = 0);
+onkeyup = event =>
+  // @todo try ternary
+  keyDown[event = event.which] && ( // if key was down
+    playerVectors[event & 1] = // then set corresponding vector to 0
+      keyDown[event] = 0 // and mark key as not down
+  );
 
 mapHeight = 20;
 mapWidthOrTileSize = 32;
 
 mapArea = mapHeight * mapWidthOrTileSize;
 
-exit = mapArea - mapWidthOrTileSize - 1;
+exit = mapArea - mapWidthOrTileSize - 1; // inside bottom right wall
 
 map = [
-  levelTransition = 1 // Level transition counter. 0 to run game, >0 to stop game & render level transition animation
+  levelTransition = 1 // level transition counter (0: run game, >0: level transition)
 ];
 
-seed = 5; // PRNG seed
+seed = 5; // PRNG (pseudo-random number generator) seed
 
+// randomly returns true/false, with 80% preference for true
 preferably = _ => (
-  (seed += seed * seed | 5) // PRNG (pseudo-random number generator)
-  %
-  mapArea
+  (seed += seed * seed | 5) // PRNG
+  % // modulus to contain random values within range
+  mapArea // just a large value we already have
 ) / mapArea < .8;
 
+// sets a tile on the map
 set = (j, t) =>
   map[
-    a[j] = processCount,
-    j
-  ] = t;
+    processed[j] = processCount, // mark tile as processed
+    j // tile index
+  ] = t; // new tile value
 
-iterate = f => {
+// calls given callback on every map tile
+iterate = callback => {
   for (j = 0; j < mapArea; j++)
-    f(j, j % mapWidthOrTileSize, j / mapWidthOrTileSize | 0)
+    callback(j, j % mapWidthOrTileSize, j / mapWidthOrTileSize | 0)
 };
 
-restart = _ => {
+// starts a level
+startLevel = _ => {
+  // initialize map
   iterate(
     (j, x, y) =>
-      map[j] = x * y && x < mapWidthOrTileSize - 1 && y < mapHeight - 1
-        ? preferably()
+      map[j] =
+        x * y // if not top or left edge
+        && x < mapWidthOrTileSize - 1 // and not right edge
+        && y < mapHeight - 1 // and not bottom edge
+          // then pick a random non-wall tile
           ? preferably()
-            ? 2
-            : 3
-          : 0
-        : 1
+            ? preferably()
+              ? 2 // dirt - 80% * 20% = 16%
+              : 3 // boulder - 20% * 20% = 5%
+            : 0 // empty space - 20%
+          // else put a wall
+          : 1 // wall
   );
 
-  map[mapWidthOrTileSize + 1] = 4;
-  map[exit] = 0
+  // place player on top left
+  map[mapWidthOrTileSize + 1] = 4; // player
+
+  // place exit
+  map[exit] = 0 // empty space
 };
 
-setInterval( _ => {
-  // Render tiles
+setInterval(_ => {
+  // render map
   iterate((j, x, y) =>
     ctx.drawImage(
-      tiles,
-      levelTransition && (x + y) % mapHeight <= mapHeight - levelTransition
-        ? 8
-        : map[j] * 8,
+      tiles, // source image
+      // source tile x
+      levelTransition // if level transition in progress
+      && (x + y) % mapHeight <= mapHeight - levelTransition // diagonal blinds
+        ? 8 // wall tile
+        : map[j] * 8, // use tile from map
       0, // source tile y
       8, // source tile width
       16, // source tile height
@@ -106,27 +136,39 @@ setInterval( _ => {
 
   levelTransition // if in the process of level transition
     ? --levelTransition || // then decrement counter
-      restart() // start next level if counter has reached 0
+      startLevel() // start next level if counter has reached 0
     : map[exit] // else if exit is occupied (by player)
       ? (levelTransition = mapHeight) // then start level transition
       : iterate( // else process map
         j =>
-          a[j] != processCount && // tile hasn't been already processed in this frame (might have been moved into this position)
-          (t = map[j]) > 2 &&
+          processed[j] != processCount && // tile hasn't been already processed in this frame (might have been moved into this position)
+          (t = map[j]) > 2 && // if tile boulder or player
           {
-            3: _ =>
-              !map[j + mapWidthOrTileSize] && (
-                set(j + mapWidthOrTileSize, 3), map[j] = 0, 1 // Move boulder down, return truthy
-              ) ||
-                (map[j + mapWidthOrTileSize] == 3) &&
-                ((map[j - 1] + map[j + mapWidthOrTileSize - 1] < 1) &&
-                  (set(j - 1, 3), set(j, 0), 1) || (map[j + 1] + map[j + mapWidthOrTileSize + 1] < 1) && (set(j + 1, 3), set(j, 0))),
-            4: _ =>
+            3: _ => // if boulder
+              !map[j + mapWidthOrTileSize] // if beneath boulder is empty
+                ? (
+                  set(j + mapWidthOrTileSize, 3), // move boulder down
+                  set(j, 0) // empty old position
+                )
+                : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
+                  ? map[j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // if can slide left
+                    ? (
+                      set(j - 1, 3), // move boulder left
+                      set(j, 0) // empty old position
+                    )
+                    : map[j + 1] + map[j + mapWidthOrTileSize + 1] < 1
+                      ? ( // if can slide right
+                        set(j + 1, 3), // move boulder right
+                        set(j, 0) // empty old position
+                      )
+                      : 0
+                  : 0,
+            4: _ => // if player
               (playerVectors[0] && ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1 || playerVectors[1] && ~map[k = j + playerVectors[1]] & 1) && set(k, 4, map[j] = 0)
           }[t](),
         processCount++ // increment process count
       )
-}, 99)
+}, 99) // render and process every 99 ms
     </script>
     <script>
       const src = source.innerHTML;
@@ -148,11 +190,19 @@ setInterval( _ => {
             tiles: 'p',
             map: 'm',
             set: 'v',
-            restart: '$',
-            ctx: 'c',
-            playerVectors: 'c',
+            startLevel: '$',
             disableImageSmoothing: 'l',
-            processCount: 'f'
+            processCount: 'f',
+            // arguments
+            prefix: 'p',
+            event: 'e',
+            callback: 'f',
+            // predefined globals
+            ctx: 'c',
+            // piggybacks
+            processed: 'a',
+            keyDown: 'b',
+            playerVectors: 'c'
           }[name] || name;
         });
 

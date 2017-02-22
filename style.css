@@ -24,11 +24,11 @@ main {
 }
 #error {
   color: red;
-  font-size: 1.25em;
+  font-size: 1.25rem;
 }
 h1 {
   color: #ccc;
-  font-size: 2em;
+  font-size: 2rem;
   font-weight: normal;
 }
 canvas:focus {
@@ -36,16 +36,16 @@ canvas:focus {
 }
 h2 {
   color: #ccc;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   font-weight: normal;
 }
 code {
-  font-size: 1.25em;
+  font-size: 1rem;
   box-sizing: border-box;
 }
 #bytes {
   color: #aaa;
-  font-size: 1em;
+  font-size: 1rem;
   text-align: right;
   position: absolute;
   width: 100%;

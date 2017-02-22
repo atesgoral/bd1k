@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <title>Boulder Dash - js1k 2017</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-okaidia.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-javascript.min.js"></script>
     <script src="main.js"></script>
   </head>
   <body id="body">
@@ -19,9 +20,9 @@
       <p><canvas id="canvas" width="1024" height="640" tabindex="0"></canvas></p>
       <p id="bytes"></p>
       <h2>Minified</h2>
-      <pre><code id="minified" class="js"></code></pre>
+      <pre><code id="minified" class="language-javascript"></code></pre>
       <h2>Annotated</h2>
-      <pre><code id="source" class="js"></code></pre>
+      <pre><code id="source" class="language-javascript"></code></pre>
     </main>
     <footer>
       &copy; 2017 <a href="http://magnetiq.com">Ates Goral</a>
@@ -141,7 +142,7 @@ setInterval(_ => {
           (t = map[j]) > 2 && // if tile boulder or player
           { // tile handlers
             3: _ => // boulder
-              !map[k = j + mapWidthOrTileSize] // if beneath boulder is empty
+              !map[k = j + mapWidthOrTileSize] // if beneath the boulder is empty
                 ? 1 // move boulder down
                 : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
                   ? map[k = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left

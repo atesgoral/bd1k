@@ -2,7 +2,7 @@ body,html { height: 100% }
 body {
   margin: 0;
   padding: 0;
-  background: #14161a;
+  background: #111;
   font-size: 100%;
   font-family: sans-serif;
   overflow: auto;
@@ -38,12 +38,6 @@ h2 {
   color: #ccc;
   font-size: 1.5em;
   font-weight: normal;
-}
-pre {
-  background: #282c34;
-  color: #abb2bf;
-  padding: 1em;
-  overflow: auto;
 }
 code {
   font-size: 1.25em;

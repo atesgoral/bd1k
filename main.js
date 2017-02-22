@@ -24,6 +24,9 @@ onload = () => {
   minified.innerHTML = new Option(min).innerHTML;
   source.innerHTML = new Option(src).innerHTML;
 
+  hljs.highlightBlock(minified);
+  hljs.highlightBlock(source);
+
   const a = canvas;
   const b = body;
   const c = canvas.getContext('2d');

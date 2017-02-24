@@ -53,6 +53,7 @@ code {
 #minified {
   word-break: break-all;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 #source {
 }

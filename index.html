@@ -120,7 +120,7 @@ setInterval(_ => {
       levelTransition // if level transition in progress
       && (x + y) % mapHeight <= mapHeight - levelTransition // diagonal blinds
         ? 8 // wall tile
-        : (map[j] & 7) * 8, // use tile from map
+        : (map[j] & 7) * 8, // use tile from map (ignore bit 3)
       0, // source tile y
       8, // source tile width
       16, // source tile height
@@ -143,12 +143,12 @@ setInterval(_ => {
           && (map[j] = tile & 7) // reset bit 3 (moving)
           && { // then invoke tile handler (& 7 to ignore bit 3)
             3: _ => // boulder handler
-              !map[k = j + mapWidthOrTileSize] // if beneath the boulder is empty
+              !map[dest = j + mapWidthOrTileSize] // if beneath the boulder is empty
                 ? 1 // move boulder down
                 : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
-                  ? map[k = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
+                  ? map[dest = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
                     ? 1 // move boulder left
-                    : map[k = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right
+                    : map[dest = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right
                       ? 1 // move boulder right
                       : 0
                   : map[j + mapWidthOrTileSize] == 4 // else if the player is beneath the boulder
@@ -156,15 +156,15 @@ setInterval(_ => {
                     ? 1 // move boulder over player
                     : 0,
             4: _ => // player handler
-              playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move
-              || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
+              playerVectors[0] & ~map[dest = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move
+              || playerVectors[1] & ~map[dest = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
                 ? 1 // move player
                 : 0
           }[tile & 7]() // if a move should happen
             && (map[ // then set tile at new position with moving flag set (bit 3)
               map[j] = 0, // empty old position
-              processed[k] = processCount, // mark tile at new position as processed
-              k // new tile position
+              processed[dest] = processCount, // mark tile at new position as processed
+              dest // destination tile position
             ] = tile | 8) // set bit 3 (moving)
       );
   processCount++ // increment process count
@@ -186,6 +186,7 @@ setInterval(_ => {
       startLevel: '$',
       disableImageSmoothing: 'l',
       processCount: 'f',
+      dest: 'k',
       // arguments
       prefix: 'p',
       event: 'e',

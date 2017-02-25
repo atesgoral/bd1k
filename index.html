@@ -39,7 +39,7 @@
 // tiles
 (tiles = new Image).src =
   // browsers are resilient to omitting the content type (image/png) and the trailing base-64 paddings (=)
-  'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
+  'data:;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAQAgMAAAAtwBQiAAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAr0lEQVQI12NgYAgN5VDiP8DAAMQgzoIm8w0sAuYbgBxHRzWVt39YA97+AXICAxctqtwv6FK5H8gpLOzqCqsXdAmrB+uRmJGazhqQmg7mZHpFxTM6RMWDOV1LQoEyoRAZrSzXMOEjrmFgzqQlgWm8BYFpYHtmJLmGMh9wDQXbI6UWGMroEDgVbE9HR0gI94MlMyBuWyQawqGgtQTM6VRgmcChwLEAzFHoYHSwsVm1CgB99zkKgltqtwAAAABJRU5ErkJggg';
 
 // processed frame counter to prevent reprocessing a moved tile
 processCount = // initialize to 0
@@ -139,8 +139,10 @@ setInterval(_ => {
       : iterate( // else process map
         j =>
           processed[j] != processCount // tile hasn't been already processed in this frame (might have been moved into this position)
-          && (tile = map[j]) > 2 // and if tile is a boulder or player
-          && (map[j] = tile & 7) // reset bit 3 (moving)
+          && ((
+            tile = map[j], // get tile
+            map[j] = tile & 7 // reset bit 3
+          ) + 1 & 6) == 4 // and if tile is a boulder or a player
           && { // then invoke tile handler (& 7 to ignore bit 3)
             3: _ => // boulder handler
               !map[dest = j + mapWidthOrTileSize] // if beneath the boulder is empty
@@ -153,7 +155,7 @@ setInterval(_ => {
                       : 0
                   : map[j + mapWidthOrTileSize] == 4 // else if the player is beneath the boulder
                     && tile & 8 // and if the boulder is falling (bit 3 is set)
-                    ? 1 // move boulder over player
+                    ? tile = 5 // crush player (turn into blodied boulder)
                     : 0,
             4: _ => // player handler
               playerVectors[0] & ~map[dest = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move

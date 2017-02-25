@@ -41,8 +41,6 @@
   // browsers are resilient to omitting the content type (image/png) and the trailing base-64 paddings (=)
   'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAi0lEQVQI12NgYAgN5VDiPwBkgJgLmsw3sAgAmY6Oaipv/7AGAJmBgYsWVe4XdAEyCwu7usLqgUyQWokZqemsAWBmpldUPKMDmNm1JBQmqpXlGiZ8BMyctCQwjbcAbO6MJNdQ5gNgc6XUAkPB2goLOzpCQrgfQNywSDSEQwHM7FRgmQBlKnQwOtjYAAC3bipFr0J0MQAAAABJRU5ErkJggg';
 
-// sound effect
-sfx = // initialize to 0
 // processed frame counter to prevent reprocessing a moved tile
 processCount = // initialize to 0
   ctx.imageSmoothingEnabled = 0; // turn off image smoothing to get crispy and chunky pixels
@@ -61,12 +59,12 @@ onkeyup = event =>
         keyDown[event] = 0 // and mark key as not down
     : 0;
 
-mapHeight = 20; // also used as utterance rate
-mapWidth = 32; // also used as tile size
+mapHeight = 20;
+mapWidthOrTileSize = 32;
 
-mapArea = mapHeight * mapWidth;
+mapArea = mapHeight * mapWidthOrTileSize;
 
-exit = mapArea - mapWidth - 1; // inside bottom right wall
+exit = mapArea - mapWidthOrTileSize - 1; // inside bottom right wall
 
 map = [
   levelTransition = 1 // level transition counter (0: run game, >0: level transition)
@@ -84,7 +82,7 @@ preferably = _ => (
 // calls given callback on every map tile
 iterate = callback => {
   for (j = 0; j < mapArea;)
-    callback(j, j % mapWidth, j++ / mapWidth | 0)
+    callback(j, j % mapWidthOrTileSize, j++ / mapWidthOrTileSize | 0)
 };
 
 // starts a level
@@ -94,7 +92,7 @@ startLevel = _ => {
     (j, x, y) =>
       map[j] =
         x * y // if not top or left edge
-        && x < mapWidth - 1 // and not right edge
+        && x < mapWidthOrTileSize - 1 // and not right edge
         && y < mapHeight - 1 // and not bottom edge
           // then pick a random non-wall tile
           ? preferably()
@@ -107,20 +105,13 @@ startLevel = _ => {
   );
 
   // place player on top left
-  map[mapWidth + 1] = 4; // player
+  map[mapWidthOrTileSize + 1] = 4; // player
 
   // place exit
   map[exit] = 0 // empty space
 };
 
 setInterval(_ => {
-  sfx = sfx && // if there's a sound effect to play
-    speechSynthesis.speak(
-      utterance = new SpeechSynthesisUtterance(sfx), // just speak numbers
-      utterance.pitch = sfx & 2, // 0: (low) for walking & level transition, 2: (high) for boulder crash
-      utterance.rate = mapHeight // spoken numbers turn into cheap sound effects when played at max rate
-    );
-
   // render map
   iterate((j, x, y) =>
     ctx.drawImage(
@@ -128,15 +119,15 @@ setInterval(_ => {
       // source tile x
       levelTransition // if level transition in progress
       && (x + y) % mapHeight <= mapHeight - levelTransition // diagonal blinds
-        ? (sfx = 10) - 2 // wall tile, also play level transition sound
+        ? 8 // wall tile
         : map[j] * 8, // use tile from map
       0, // source tile y
       8, // source tile width
       16, // source tile height
-      x * mapWidth, // destination tile x
-      y * mapWidth, // destination tile y
-      mapWidth, // destination tile width
-      mapWidth // destination tile height
+      x * mapWidthOrTileSize, // destination tile x
+      y * mapWidthOrTileSize, // destination tile y
+      mapWidthOrTileSize, // destination tile width
+      mapWidthOrTileSize // destination tile height
     )
   );
 
@@ -151,21 +142,19 @@ setInterval(_ => {
           (t = map[j]) > 2 && // if tile boulder or player
           { // tile handlers
             3: _ => // boulder
-              !map[k = j + mapWidth] // if beneath the boulder is empty
-                ? map[k + mapWidth]
-                  ? sfx = 2 // play boulder crash sound and ...
-                  : 1 // move boulder down
-                : map[j + mapWidth] == 3 // else if resting on another boulder
-                  ? map[k = j - 1] + map[j + mapWidth - 1] < 1 // else if can slide left
+              !map[k = j + mapWidthOrTileSize] // if beneath the boulder is empty
+                ? 1 // move boulder down
+                : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
+                  ? map[k = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
                     ? 1 // move boulder left
-                    : map[k = j + 1] + map[j + mapWidth + 1] < 1 // else if can slide right
+                    : map[k = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right
                       ? 1 // move boulder right
                       : 0
                   : 0,
             4: _ => // player
-              playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidth] & 1 // if the y vector is set and the player can move
+              playerVectors[0] & ~map[k = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move
               || playerVectors[1] & ~map[k = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
-                ? sfx = sfx || 1 // move player and play walking sound
+                ? 1 // move player
                 : 0
           }[t]() && // invoke tile handler and if a move should happen
             (map[
@@ -183,7 +172,7 @@ setInterval(_ => {
       preferably: 'r',
       seed: 'q',
       mapHeight: 'h',
-      mapWidth: 'w',
+      mapWidthOrTileSize: 'w',
       mapArea: 'A',
       exit: 'e',
       levelTransition: 'o',
@@ -192,8 +181,6 @@ setInterval(_ => {
       startLevel: '$',
       disableImageSmoothing: 'l',
       processCount: 'f',
-      sfx: 'g',
-      utterance: 'u',
       // arguments
       prefix: 'p',
       event: 'e',

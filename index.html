@@ -41,9 +41,13 @@
   // browsers are resilient to omitting the content type (image/png) and the trailing base-64 paddings (=)
   'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAl0lEQVQI12NgYOBQCg3lP8AAAguaQkPNN7AIAJlqKo6Ob/+wBgCZixYFBlbuF3QBMru6CgvD6sFMiRmhoanpYAWZXqGhUfGMDiAFS0JDQyGiWlmhoa5hwkeAzElA0cA03gIgc0aSo6NrKDPIPim1wMDAULC2jo7CwpAQ7gcgNywKDRUN4VAAMjsVQkNZJoCZCh2hQJU2NgC8WipFK+hqJAAAAABJRU5ErkJggg';
 
+// current level
+level = 1;
+
 // processed frame counter to prevent reprocessing a moved tile
-processCount = // initialize to 0
-  ctx.imageSmoothingEnabled = 0; // turn off image smoothing to get crispy and chunky pixels
+processCount =
+  // turn off image smoothing to get crispy and chunky pixels
+  ctx.imageSmoothingEnabled = 0;
 
 onkeydown = event =>
   playerVectors[
@@ -67,7 +71,7 @@ mapArea = mapHeight * mapWidthOrTileSize;
 exit = mapArea - mapWidthOrTileSize - 1; // inside bottom right wall
 
 map = [
-  level = levelTransition = 1 // level transition counter (0: run game, >0: level transition)
+  levelTransition = mapHeight // level transition counter (0: run game, >0: level transition)
 ];
 
 seed = 5; // PRNG (pseudo-random number generator) seed
@@ -107,10 +111,6 @@ startLevel = _ => {
   // place player on top left
   map[mapWidthOrTileSize + 1] = 4; // player
 
-  level++ > 10 // if past level 10
-    ? map[mapWidthOrTileSize * 2 - 2] = 4 // then introduce second player
-    : 0;
-
   // place exit
   map[exit] = 0 // empty space
 };
@@ -135,9 +135,17 @@ setInterval(_ => {
     )
   );
 
+  ctx.font = '120px monospace';
+
+  levelTransition && ctx.fillText(
+    'LEVEL: ' + level,
+    mapWidthOrTileSize,
+    mapArea - mapWidthOrTileSize
+  );
+
   levelTransition // if in the process of level transition
     ? --levelTransition || // then decrement counter
-      startLevel() // start next level if counter has reached 0
+      startLevel(level++) // start next level if counter has reached 0
     : map[exit] // else if exit is occupied (by player)
       ? levelTransition = mapHeight // then start level transition
       : iterate( // else process map

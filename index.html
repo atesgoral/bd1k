@@ -135,10 +135,11 @@ setInterval(_ => {
     )
   );
 
-  ctx.font = '120px monospace';
+  ctx.font = '99px monospace';
+  ctx.fillStyle = '#fff';
 
   levelTransition && ctx.fillText(
-    'LEVEL: ' + level,
+    level,
     mapWidth,
     mapArea - mapWidth
   );

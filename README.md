@@ -6,6 +6,8 @@ Level 11 is unbeatable because the player starts trapped among boulders.
 
 A lot of bytes were hurt in the making of this game.
 
+![bd1k](https://cloud.githubusercontent.com/assets/50832/23341302/aee9343c-fc12-11e6-9d2b-e59211da3222.png)
+
 ## Run
 
 Just open index.html in your browser.

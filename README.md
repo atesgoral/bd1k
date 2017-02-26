@@ -19,6 +19,11 @@ Just open index.html in your browser. Or visit https://atesgoral.github.io/bd1k/
 * Level numbers
 * Minutes and minutes of fun and excitement for the entire family!
 
+# Reverted features
+
+* [Buddy player](8457f67dcace46f54f874df7fbd7844d427f1feb) - Introduced a doppelgänger that moves along with the player at level 11 since the original player starts off as trapped. This was a fun feature because it's not easy to predict what happens to the other player when you're just watching one of them and it's game over when one of them dies. Reverted because this is not true to the original Boulder Dash and turns the game into a different puzzle game.
+* [Bloodied boulder](868414d407a0a938e7f1b08bd1934265bd458af4) - Added a bloodied boulder sprite when the player gets crushed by a boulder. Reverted because the new spire took too much space and it wasn't even that noticeable. 
+* [Sound effects](9e38f6ca3b1e642fbd63cfe4ce29ac4d6d990f8b) - Used the Web Speech API to add sound effects. I would be playing "one", "two" or "ten" at extreme pitch and rates to create percussive sound effects. Unfortunately it only worked nicely specificially on Chrome on macOS, so I reverted it.
 
 ## Updating the sprites
 

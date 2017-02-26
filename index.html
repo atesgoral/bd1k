@@ -67,7 +67,7 @@ mapArea = mapHeight * mapWidthOrTileSize;
 exit = mapArea - mapWidthOrTileSize - 1; // inside bottom right wall
 
 map = [
-  levelTransition = 1 // level transition counter (0: run game, >0: level transition)
+  level = levelTransition = 1 // level transition counter (0: run game, >0: level transition)
 ];
 
 seed = 5; // PRNG (pseudo-random number generator) seed
@@ -106,6 +106,10 @@ startLevel = _ => {
 
   // place player on top left
   map[mapWidthOrTileSize + 1] = 4; // player
+
+  level++ > 10 // if past level 10
+    ? map[mapWidthOrTileSize * 2 - 2] = 4 // then introduce second player
+    : 0;
 
   // place exit
   map[exit] = 0 // empty space
@@ -155,8 +159,9 @@ setInterval(_ => {
                   : map[dest] == 4 // else if the player is beneath the boulder
                     && processed[j] == processCount - 1 // and if the boulder is falling
                     ? tile = (
+                      level = 1, // restart game
                       levelTransition = mapHeight, // restart level
-                      seed = 5 // reset seed (restart game)
+                      seed = 5 // reset seed
                     ) // crush player (turn into blodied boulder)
                     : 0,
             4: _ => // player handler
@@ -184,6 +189,7 @@ setInterval(_ => {
       mapArea: 'A',
       exit: 'e',
       levelTransition: 'o',
+      level: 'l',
       tiles: 'p',
       map: 'm',
       tile: 't',

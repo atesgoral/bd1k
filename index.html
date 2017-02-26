@@ -147,7 +147,7 @@ setInterval(_ => {
             3: _ => // boulder handler
               !map[dest = j + mapWidthOrTileSize] // if beneath the boulder is empty
                 ? 1 // move boulder down
-                : map[dest] == 3 // else if resting on another boulder
+                : map[dest] == tile // else if resting on another boulder
                   ? map[dest = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
                     ? 1 // move boulder left
                     : map[dest = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right

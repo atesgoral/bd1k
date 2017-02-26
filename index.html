@@ -39,7 +39,7 @@
 // tiles
 (tiles = new Image).src =
   // browsers are resilient to omitting the content type (image/png) and the trailing base-64 paddings (=)
-  'data:;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAQAgMAAAAtwBQiAAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAr0lEQVQI12NgYAgN5VDiP8DAAMQgzoIm8w0sAuYbgBxHRzWVt39YA97+AXICAxctqtwv6FK5H8gpLOzqCqsXdAmrB+uRmJGazhqQmg7mZHpFxTM6RMWDOV1LQoEyoRAZrSzXMOEjrmFgzqQlgWm8BYFpYHtmJLmGMh9wDQXbI6UWGMroEDgVbE9HR0gI94MlMyBuWyQawqGgtQTM6VRgmcChwLEAzFHoYHSwsVm1CgB99zkKgltqtwAAAABJRU5ErkJggg';
+  'data:;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQAgMAAAAZudU+AAAADFBMVEUAAABSUlKlKgD///8IGsOpAAAAl0lEQVQI12NgYOBQCg3lP8AAAguaQkPNN7AIAJlqKo6Ob/+wBgCZixYFBlbuF3QBMru6CgvD6sFMiRmhoanpYAWZXqGhUfGMDiAFS0JDQyGiWlmhoa5hwkeAzElA0cA03gIgc0aSo6NrKDPIPim1wMDAULC2jo7CwpAQ7gcgNywKDRUN4VAAMjsVQkNZJoCZCh2hQJU2NgC8WipFK+hqJAAAAABJRU5ErkJggg';
 
 // processed frame counter to prevent reprocessing a moved tile
 processCount = // initialize to 0
@@ -97,11 +97,11 @@ startLevel = _ => {
           // then pick a random non-wall tile
           ? preferably()
             ? preferably()
-              ? 2 // dirt - 80% * 20% = 16%
+              ? 1 // dirt - 80% * 20% = 16%
               : 3 // boulder - 20% * 20% = 5%
             : 0 // empty space - 20%
           // else put a wall
-          : 1 // wall
+          : 2 // wall
   );
 
   // place player on top left
@@ -121,10 +121,10 @@ setInterval(_ => {
     ctx.drawImage(
       tiles, // source image
       // source tile x
-      levelTransition // if level transition in progress
+      (levelTransition // if level transition in progress
       && (x + y) % mapHeight <= mapHeight - levelTransition // diagonal blinds
-        ? 8 // wall tile
-        : map[j] * 8, // use tile from map
+        ? 2 // wall
+        : map[j]) * 8, // tile from map
       0, // source tile y
       8, // source tile width
       16, // source tile height
@@ -155,15 +155,14 @@ setInterval(_ => {
                       : 0
                   : map[dest] == 4 // else if the player is beneath the boulder
                     && processed[j] == processCount - 1 // and if the boulder is falling
-                    ? tile = (
+                    && (
                       level = 1, // restart game
                       levelTransition = mapHeight, // restart level
                       seed = 5 // reset seed
-                    ) // crush player (turn into blodied boulder)
-                    : 0,
+                    ), // crush player
             4: _ => // player handler
-              playerVectors[0] & ~map[dest = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move
-              || playerVectors[1] & ~map[dest = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
+              playerVectors[0] & map[dest = j + playerVectors[0] * -mapWidthOrTileSize] < 2 // if the y vector is set and the player can move
+              || playerVectors[1] & map[dest = j + playerVectors[1]] < 2 // if the x vector is set and the player can move
                 ? 1 // move player
                 : 0
           }[tile = map[j]]) // get tile and if a tile handler exists

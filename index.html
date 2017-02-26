@@ -120,7 +120,7 @@ setInterval(_ => {
       levelTransition // if level transition in progress
       && (x + y) % mapHeight <= mapHeight - levelTransition // diagonal blinds
         ? 8 // wall tile
-        : (map[j] & 7) * 8, // use tile from map (ignore bit 3)
+        : map[j] * 8, // use tile from map
       0, // source tile y
       8, // source tile width
       16, // source tile height
@@ -140,21 +140,20 @@ setInterval(_ => {
         j =>
           processed[j] != processCount // tile hasn't been already processed in this frame (might have been moved into this position)
           && ((
-            tile = map[j], // get tile
-            map[j] = tile & 7 // reset bit 3
+            tile = map[j] // get tile
           ) + 1 & 6) == 4 // and if tile is a boulder or a player
-          && { // then invoke tile handler (& 7 to ignore bit 3)
+          && { // then invoke tile handler
             3: _ => // boulder handler
               !map[dest = j + mapWidthOrTileSize] // if beneath the boulder is empty
                 ? 1 // move boulder down
-                : map[j + mapWidthOrTileSize] == 3 // else if resting on another boulder
+                : map[dest] == 3 // else if resting on another boulder
                   ? map[dest = j - 1] + map[j + mapWidthOrTileSize - 1] < 1 // else if can slide left
                     ? 1 // move boulder left
                     : map[dest = j + 1] + map[j + mapWidthOrTileSize + 1] < 1 // else if can slide right
                       ? 1 // move boulder right
                       : 0
-                  : map[j + mapWidthOrTileSize] == 4 // else if the player is beneath the boulder
-                    && tile & 8 // and if the boulder is falling (bit 3 is set)
+                  : map[dest] == 4 // else if the player is beneath the boulder
+                    && processed[j] == processCount - 1 // and if the boulder is falling
                     ? tile = (
                       levelTransition = mapHeight, // restart level
                       seed = 5 // reset seed (restart game)
@@ -165,12 +164,12 @@ setInterval(_ => {
               || playerVectors[1] & ~map[dest = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
                 ? 1 // move player
                 : 0
-          }[tile & 7]() // if a move should happen
-            && (map[ // then set tile at new position with moving flag set (bit 3)
+          }[tile]() // if a move should happen
+            && (map[ // then set tile at new position
               map[j] = 0, // empty old position
               processed[dest] = processCount, // mark tile at new position as processed
               dest // destination tile position
-            ] = tile | 8) // set bit 3 (moving)
+            ] = tile) // set tile
       );
   processCount++ // increment process count
 }, 99) // render and process every 99 ms

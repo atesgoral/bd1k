@@ -12,6 +12,10 @@ Just open index.html in your browser. Or visit https://atesgoral.github.io/bd1k/
 
 * Tested on Chrome and Firefox.
 * 10 increasingly difficult levels. Level 11 is unbeatable because the player starts trapped among boulders.
+* 4 sprites from the original game.
+* Random level generator with a custom PRNG to make level generation deterministic (that fails on level 11).
+* Boulders fall, slide over each other and crush player.
+* Minutes and minutes of fun and excitement for the entire family!
 
 ## Updating the sprites
 

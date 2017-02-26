@@ -155,7 +155,10 @@ setInterval(_ => {
                       : 0
                   : map[j + mapWidthOrTileSize] == 4 // else if the player is beneath the boulder
                     && tile & 8 // and if the boulder is falling (bit 3 is set)
-                    ? tile = (levelTransition = mapHeight, seed = 5) // crush player (turn into blodied boulder)
+                    ? tile = (
+                      levelTransition = mapHeight, // restart level
+                      seed = 5 // reset seed (restart game)
+                    ) // crush player (turn into blodied boulder)
                     : 0,
             4: _ => // player handler
               playerVectors[0] & ~map[dest = j + playerVectors[0] * -mapWidthOrTileSize] & 1 // if the y vector is set and the player can move

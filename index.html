@@ -143,10 +143,7 @@ setInterval(_ => {
       : iterate( // else process map
         j =>
           processed[j] != processCount // tile hasn't been already processed in this frame (might have been moved into this position)
-          && ((
-            tile = map[j] // get tile
-          ) + 1 & 6) == 4 // and if tile is a boulder or a player
-          && { // then invoke tile handler
+          && (handler = { // then invoke tile handler
             3: _ => // boulder handler
               !map[dest = j + mapWidthOrTileSize] // if beneath the boulder is empty
                 ? 1 // move boulder down
@@ -169,7 +166,8 @@ setInterval(_ => {
               || playerVectors[1] & ~map[dest = j + playerVectors[1]] & 1 // if the x vector is set and the player can move
                 ? 1 // move player
                 : 0
-          }[tile]() // if a move should happen
+          }[tile = map[j]]) // get tile and if a tile handler exists
+            && handler() // invoke tile handler and if a move should happen
             && (map[ // then set tile at new position
               map[j] = 0, // empty old position
               processed[dest] = processCount, // mark tile at new position as processed
@@ -193,6 +191,7 @@ setInterval(_ => {
       tiles: 'p',
       map: 'm',
       tile: 't',
+      handler: 'g',
       startLevel: '$',
       processCount: 'f',
       dest: 'k',

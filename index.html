@@ -109,8 +109,8 @@ startLevel = _ => {
           // then pick a random non-wall tile
           ? preferably()
             ? preferably()
-              ? 1 // dirt - 80% * 20% = 16%
-              : 3 // boulder - 20% * 20% = 5%
+              ? 1 // dirt - 80% * 80% = 64%
+              : 3 // boulder - 80% * 20% = 16%
             : 0 // empty space - 20%
           // else put a wall
           : 2 // wall
